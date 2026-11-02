@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meu horário – 2º Info</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef2f6;--card:#fff;--ink:#14213d;--mute:#5d6b82;--line:#d5dce6;--acc:#1f8a3b;--accbg:#dff3e5;--warn:#b86e00;--warnbg:#fff1d6;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1624;--card:#18223a;--ink:#eaf0fb;--mute:#97a5bf;--line:#2b3957;--acc:#5fd47e;--accbg:#173b27;--warn:#ffc15a;--warnbg:#3d2f10;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1624;--card:#18223a;--ink:#eaf0fb;--mute:#97a5bf;--line:#2b3957;--acc:#5fd47e;--accbg:#173b27;--warn:#ffc15a;--warnbg:#3d2f10;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 "Bricolage Grotesque",system-ui,sans-serif}
+main{max-width:520px;margin:0 auto;padding:16px}
+h1{font-size:1.1rem;margin:0;font-weight:600;color:var(--mute)}
+.top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.clock{font-weight:800;font-size:1.1rem}
+.now{background:var(--acc);color:#fff;border-radius:20px;padding:20px;margin-bottom:12px}
+:root[data-theme="dark"] .now,.dk .now{color:#0f1624}
+.now small{opacity:.85}
+.now h2{font-size:2rem;line-height:1.1;margin:6px 0 4px;font-weight:800}
+.now .room{display:inline-block;margin-top:10px;background:rgba(255,255,255,.22);padding:4px 12px;border-radius:99px;font-weight:600}
+.nxt{background:var(--warnbg);color:var(--warn);border-radius:16px;padding:14px 16px;margin-bottom:12px;font-weight:600}
+.nxt b{color:var(--ink)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:10px 14px;background:var(--ink);color:var(--bg);cursor:pointer}
+button.alt{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;background:var(--card);color:var(--ink);border:1px solid var(--line);padding:9px 0}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.row{display:grid;grid-template-columns:52px 1fr 92px;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.row.cur{border-color:var(--acc);box-shadow:inset 4px 0 0 var(--acc)}
+.row.empty{opacity:.55}
+.row .t{font-weight:800}
+.row .n{font-weight:600}
+.row .p{font-size:.85rem;color:var(--mute)}
+input{width:100%;font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.set{margin-top:16px;color:var(--mute);font-size:.9rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.set input{width:64px}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:496px;margin:auto;background:var(--ink);color:var(--bg);padding:14px;border-radius:14px;display:none;font-weight:600}
+</style>
+<style>body{min-height:100vh;background:radial-gradient(900px 420px at 50% -8%,color-mix(in srgb,var(--acc) 24%,transparent),transparent),var(--bg)}main{padding:20px 16px 32px}h1{font-size:1rem;font-weight:600}.clock{font-size:1.4rem;font-variant-numeric:tabular-nums}#now{position:relative;overflow:hidden;color:#fff!important;border-radius:28px;padding:24px;margin-bottom:14px;box-shadow:0 20px 40px -20px rgba(0,0,0,.55)}#now::after{content:'';position:absolute;right:-50px;bottom:-70px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.12)}#now>*{position:relative;z-index:1}#now .em{position:absolute;right:20px;top:16px;font-size:2.8rem;line-height:1;z-index:1}#now small{font-weight:600;font-size:.9rem}#now h2{font-size:2.1rem;max-width:80%;margin:8px 0 4px}#now .room{margin-top:14px;padding:6px 14px;backdrop-filter:blur(6px)}#now .bar{height:8px;border-radius:99px;background:rgba(255,255,255,.28);margin-top:18px;overflow:hidden}#now .bar i{display:block;height:100%;background:#fff;border-radius:99px;transition:width 1s}.nxt{background:var(--card);color:var(--mute);font-weight:500;border-radius:18px;border-left:6px solid var(--warn);box-shadow:0 8px 20px -14px rgba(20,33,61,.5)}.btns button{border-radius:14px;padding:12px 16px}#ask{background:var(--acc);color:var(--bg)}.tabs button{border-radius:99px}.row{grid-template-columns:56px 1fr 96px;border:0;border-left:6px solid hsl(var(--h,210) 65% 50%);border-radius:18px;box-shadow:0 8px 18px -14px rgba(20,33,61,.55)}.row.empty{border-left-color:var(--line);box-shadow:none;background:transparent}.row.cur{background:color-mix(in srgb,hsl(var(--h) 65% 50%) 16%,var(--card));box-shadow:0 10px 24px -12px hsl(var(--h) 65% 40%)}.row .t{color:var(--mute);font-variant-numeric:tabular-nums}.row .n{font-size:1.02rem}input{border-radius:12px}@media(prefers-reduced-motion:reduce){#now .bar i{transition:none}}</style>
+</head>
+<body>
+<main>
+<div class="top"><h1>2º ano Informática · 2026-2</h1><div class="clock" id="clock"></div></div>
+<section class="now" id="now" aria-live="polite"></section>
+<div class="nxt" id="nxt"></div>
+<div class="btns">
+<button id="ask">Ativar avisos</button>
+<button class="alt" id="ping">Me avisar agora</button>
+</div>
+<div class="tabs" id="tabs" role="group" aria-label="Dia da semana"></div>
+<div id="list"></div>
+<div class="set">Avisar <input id="lead" type="number" min="0" max="60" value="10" aria-label="Minutos antes"> min antes da aula. Os avisos só chegam com esta página aberta.</div>
+</main>
+<div id="toast" role="status"></div>
+<script>
+var H=["08:00","09:00","10:20","11:20","13:50","14:50","16:00","17:00"];
+var D=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+var EB=["Eletrônica Básica","André Wild"],GE=["Geografia II","Laise Cabral"],PO=["Paradigma Orientação Objeto","Renato"],AR=["Artes","Daivdson"],FI=["Filosofia II","Flávio Oliveira"],QU=["Química II","Gustavo"],SO=["Sociologia II","Maria Otavia"],EF=["Educação Física II","Thalita Cintra"],LP=["Língua Portuguesa e Literatura II","Mariana Rodrigues"],MA=["Matemática II","Pedro Cortes"],HI=["História II","Daniel"],TO=["Tópicos I – Informática","Franciele"],DW=["Desenvolvimento Web II","Franciele"],IN=["Inglês II","Milton Cássio"],BI=["Biologia II","Karine Dias"],FS=["Física II","Elisângela"],X=null;
+var S={1:[EB,EB,GE,X,PO,PO,AR,X],2:[FI,FI,QU,QU,X,X,X,X],3:[SO,EF,LP,MA,HI,HI,TO,TO],4:[LP,DW,DW,LP,X,X,X,X],5:[IN,IN,BI,BI,FS,FS,MA,MA]};
+var rooms={},lead=10,sel=1,sent={},T=null;
+try{rooms=JSON.parse(localStorage.getItem("rooms")||"{}");lead=+localStorage.getItem("lead")||10}catch(e){}
+function $(i){return document.getElementById(i)}
+function m(h){var p=h.split(":");return +p[0]*60+ +p[1]}
+function hm(x){return String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0")}
+var IC={"Eletrônica":["⚡",45],"Geografia":["🌎",150],"Paradigma":["💻",265],"Artes":["🎨",325],"Filosofia":["🤔",285],"Química":["🧪",170],"Sociologia":["👥",20],"Educação":["🏃",10],"Língua":["📖",215],"Matemática":["➗",235],"História":["🏛️",30],"Tópicos":["🖥️",190],"Desenvolvimento":["🌐",200],"Inglês":["🇬🇧",350],"Biologia":["🧬",130],"Física":["🧲",250]};
+function ic(c){return IC[c[0].split(" ")[0]]||["📘",210]}
+function room(c){return rooms[c[0]]||"Sala 4"}
+function toast(t){try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}var e=$("toast");e.textContent=t;e.style.display="block";setTimeout(function(){e.style.display="none"},5000)}
+function notify(t,b){
+  try{if(window.Notification&&Notification.permission==="granted"){new Notification(t,{body:b});return}}catch(e){}
+  toast(t+" – "+b);
+}
+function state(){
+  var n=new Date(),d=n.getDay(),mi=n.getHours()*60+n.getMinutes(),cur=null,nx=null;
+  for(var k=0;k<8&&S[d];k++){var c=S[d][k];if(!c)continue;var s=m(H[k]);
+    if(mi>=s&&mi<s+60)cur={c:c,s:s};
+    else if(s>mi&&!nx)nx={c:c,s:s,day:0}}
+  if(!nx){for(var o=1;o<=7&&!nx;o++){var dd=(d+o)%7;if(!S[dd])continue;
+    for(var j=0;j<8;j++)if(S[dd][j]){nx={c:S[dd][j],s:m(H[j]),day:o,dn:D[dd]};break}}}
+  return {cur:cur,nx:nx,mi:mi,d:d}
+}
+function render(){
+  var st=state(),n=new Date();
+  $("clock").textContent=hm(st.mi);
+  if(st.cur){var I=ic(st.cur.c),p=Math.min(100,Math.max(0,(st.mi-st.cur.s)/60*100)),left=st.cur.s+60-st.mi;$("now").style.background="linear-gradient(135deg,hsl("+I[1]+" 62% 30%),hsl("+I[1]+" 70% 46%))";$("now").innerHTML="<div class='em'>"+I[0]+"</div><small>Agora · faltam "+left+" min</small><h2>"+st.cur.c[0]+"</h2><div>"+st.cur.c[1]+"</div><span class='room'>📍 "+room(st.cur.c)+"</span><div class='bar'><i style='width:"+p+"%'></i></div>"}
+  else{$("now").style.background="linear-gradient(135deg,#334155,#64748b)";$("now").innerHTML="<div class='em'>☕</div><small>Agora</small><h2>Sem aula</h2><div>Aproveite o intervalo.</div>"}
+  if(st.nx){var q=st.nx.day==0?"hoje às "+hm(st.nx.s):(st.nx.day==1?"amanhã":st.nx.dn)+" às "+hm(st.nx.s);
+    $("nxt").innerHTML="Próxima: <b>"+st.nx.c[0]+"</b> · "+q+" · "+room(st.nx.c)}
+  else $("nxt").textContent="Sem próximas aulas.";
+  if(T&&!T.b)$("nxt").innerHTML="Teste: <b>Aula de teste</b> · hoje às "+hm(T.s)+" · Sala 4";
+}
+function drawList(){
+  var h="",d=S[sel];
+  for(var k=0;k<8;k++){var c=d[k];
+    if(!c){h+="<div class='row empty'><div class='t'>"+H[k]+"</div><div class='p'>Sem aula</div><div></div></div>";continue}
+    var isCur=sel==new Date().getDay()&&state().cur&&state().cur.s==m(H[k]);
+    h+="<div class='row"+(isCur?" cur":"")+"' style='--h:"+ic(c)[1]+"'><div class='t'>"+H[k]+"</div><div><div class='n'>"+ic(c)[0]+" "+c[0]+"</div><div class='p'>"+c[1]+"</div></div><input data-s='"+c[0]+"' placeholder='Sala 4' value='"+(rooms[c[0]]||"")+"' aria-label='Sala de "+c[0]+"'></div>"}
+  $("list").innerHTML=h;
+  var ins=$("list").getElementsByTagName("input");
+  for(var i=0;i<ins.length;i++)ins[i].onchange=function(){rooms[this.dataset.s]=this.value.trim();try{localStorage.setItem("rooms",JSON.stringify(rooms))}catch(e){}drawList();render()};
+}
+function drawTabs(){
+  var h="";for(var i=1;i<=5;i++)h+="<button data-d='"+i+"' aria-pressed='"+(i==sel)+"'>"+D[i]+"</button>";
+  $("tabs").innerHTML=h;
+  var bs=$("tabs").getElementsByTagName("button");
+  for(var j=0;j<bs.length;j++)bs[j].onclick=function(){sel=+this.dataset.d;drawTabs();drawList()};
+}
+$("ask").onclick=function(){
+  if(!window.Notification){toast("Este navegador não suporta notificações.");return}
+  Notification.requestPermission().then(function(p){$("ask").textContent=p==="granted"?"Avisos ativados ✓":"Ativar avisos";toast(p==="granted"?"Avisos ativados.":"Avisos bloqueados. Libere nas configurações do navegador.")})
+};
+$("ping").onclick=function(){
+  var s=state();
+  if(s.cur)notify("Agora: "+s.cur.c[0],room(s.cur.c)+" · até "+hm(s.cur.s+60));
+  else if(s.nx)notify("Próxima: "+s.nx.c[0],room(s.nx.c)+" · "+hm(s.nx.s));
+  else notify("Sem aulas","Nada marcado.")
+};
+$("lead").value=lead;
+$("lead").onchange=function(){lead=Math.max(0,+this.value||0);try{localStorage.setItem("lead",lead)}catch(e){}};
+function tick(){
+  render();
+  var s=state(),d=s.d;
+  if(T){var df=T.s-s.mi;
+    if(!T.a&&df<=lead&&df>0){T.a=1;notify("Aula em "+df+" min: Aula de teste","Sala 4 · "+hm(T.s))}
+    if(!T.b&&df<=0){T.b=1;notify("Aula de teste começou","Sala 4")}}
+  if(S[d])for(var k=0;k<8;k++){var c=S[d][k];if(!c)continue;
+    if(k>0&&S[d][k-1]&&S[d][k-1][0]==c[0])continue;
+    var diff=m(H[k])-s.mi,key=d+"-"+k+"-"+new Date().getDate();
+    if(diff==lead&&!sent[key]){sent[key]=1;notify("Aula em "+lead+" min: "+c[0],room(c)+" · "+H[k])}}
+}
+sel=(new Date().getDay()>=1&&new Date().getDay()<=5)?new Date().getDay():1;
+try{if(window.Notification&&Notification.permission==="granted")$("ask").textContent="Avisos ativados ✓"}catch(e){}
+drawTabs();drawList();tick();setInterval(tick,20000);
+</script>
+</body>
+</html>
